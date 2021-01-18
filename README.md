@@ -68,6 +68,7 @@ Configuration option 'xp_cmdshell' changed from 0 to 1. Run the RECONFIGURE stat
 * 1> xp_cmdshell 'dir C:\';
 * 2> go
 ```
+## Testing
 * SSH login
 ```
 ssh <username@ip> 

